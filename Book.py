@@ -6,14 +6,9 @@ class Book:
         self.availab = availab
         self.url = url
 
-    def to_dict(self):
-        return {
-            'title': self.title,
-            'price': self.price,
-            'rating': self.rating,
-            'availab':self.availab,
-            'url': self.url
-        }
+    def rating_num(self):
+        ratings_map = { 'One': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5 }
+        return ratings_map[self.rating]
 
     def __str__(self):
         return f"{self.title} - £{self.price} - rating {self.rating} - {self.availab}"

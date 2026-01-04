@@ -1,10 +1,9 @@
 import csv
 
 class BookService:
-    RATING_VALUES = {'Five': 5, 'Four': 4, 'Three': 3, 'Two': 2, 'One': 1}
-
     def __init__(self, database):
         self.database = database
+
 
     def get_statistics(self):
 
@@ -35,11 +34,9 @@ class BookService:
             'ratings': ratings
         }
 
+
     def search_books(self, query):
         all_books = self.database.get_all_books()
-
-        if not all_books:
-            return []
 
         query_lower = query.lower()
         matching_books = []
@@ -49,25 +46,14 @@ class BookService:
 
         return matching_books
 
-    def find_cheapest_books(self, n=10):
+
+    def cheap_book_high_rating(self, nr_books=10):
         books = self.database.get_all_books()
 
-        if not books:
-            return []
+        sorted_books = sorted(books, key=lambda book: (-book.rating_num(), book.price))
 
-        sorted_books = sorted(books, key = lambda b: b.price)
+        return sorted_books[:nr_books]
 
-        return sorted_books[:n]
-
-    def find_highest_rated(self, n=10):
-        books = self.database.get_all_books()
-
-        if not books:
-            return []
-
-        sorted_books = sorted(books, key=lambda book: self.RATING_VALUES.get(book.rating, 0), reverse=True )
-
-        return sorted_books[:n]
 
     def export_to_csv(self, filename="books_export.csv"):
         books = self.database.get_all_books()

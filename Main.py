@@ -1,27 +1,39 @@
 from Scraper import BookScraper
 from DataBase import BookDatabase
 from BookService import BookService
-from UI import UI
+from texttable import Texttable
 import time
+
+
+def show_menu():
+    print("             Menu:           ")
+    print("1. Scrape books from website")
+    print("2. Show statistics")
+    print("3. Search books by title")
+    print("4. Find cheapest books")
+    print("5. Find highest rated books")
+    print("6. Export to CSV")
+    print("7. Exit")
 
 
 def main():
     db = BookDatabase()
     scraper = BookScraper()
     service = BookService(db)
-    ui = UI()
+
+    print("Book Catalog & Analytics System\n")
 
     while True:
-        ui.show_menu()
-        choice = ui.get_menu_choice()
+        show_menu()
+        choice = int(input("Enter your choice (1-7): "))
 
-        if choice == '1':
-            # Scraping
-            ui.show_info("\nScraping first 5 pages (~100 books)...")
+        if choice == 1:
+
+            print("Scraping first 5 pages (~100 books)...")
             books = []
 
             for page in range(1, 6):
-                ui.show_scraping_progress(page, 5)
+                print(f"Scraping page {page}/5...")
                 page_books = scraper.scrape_page(page)
                 if not page_books:
                     break
@@ -30,54 +42,78 @@ def main():
 
             if books:
                 num_saved = db.save_books(books)
-                ui.show_success(f"Successfully scraped and saved {num_saved} books!\n")
+                print(f"\nSuccessfully scraped and saved {num_saved} books!\n")
             else:
-                ui.show_error("No books found.\n")
+                print("No books found.\n")
 
-        elif choice == '2':
+        elif choice == 2:
             # Statistics
             stats = service.get_statistics()
-            ui.show_statistics(stats)
+            try:
+                print("Catalog Statistics:")
+                print(f"Total Books: {stats['total_books']}")
+                print(f"Average Price: £{float(stats['avg_price'])}")
+                print(f"Minimum Price: £{float(stats['min_price'])}")
+                print(f"Maximum Price: £{float(stats['max_price'])}")
+                print()
+                print("Ratings Distribution:")
+                for rating, count in stats['ratings'].items():
+                    print(f"  {rating} stars: {count} books")
+                print()
+            except Exception:
+                print("No statistics available. Please scrape books first.\n")
 
-        elif choice == '3':
+        elif choice == 3:
             # Search books
-            query = ui.get_search_query()
+            query = input("Enter search term (book title): ").strip()
 
             if query:
                 books = service.search_books(query)
                 if books:
-                    ui.display_books_table(books, f"Search Results for '{query}'")
+                    print(f"Search Results for '{query}'")
+                    display_table(books)
                 else:
-                    ui.show_info(f"No books found matching '{query}'")
+                    print(f"No books found matching '{query}'")
             else:
-                ui.show_error("Please enter a search term.")
+                print("Please enter a search term.")
 
-        elif choice == '4':
+        elif choice == 4:
             # Cheapest books
-            books = service.find_cheapest_books(10)
-            ui.display_books_table(books, "Top 10 Cheapest Books")
+            books = service.cheap_book_high_rating(10)
+            print("Top 10 Cheapest Books with High Ratings")
+            display_table(books)
 
-        elif choice == '5':
-            # Highest rated books
-            books = service.find_highest_rated(10)
-            ui.display_books_table(books, "Top 10 Highest Rated Books")
 
-        elif choice == '6':
+        elif choice == 5:
             # Export to CSV
             num_exported = service.export_to_csv()
             if num_exported > 0:
-                ui.show_success(f"Exported {num_exported} books to books_export.csv")
+                print(f"Exported {num_exported} books to books_export.csv")
             else:
-                ui.show_error("No books to export or error occurred.")
+                print("No books to export or error occurred.")
 
-        elif choice == '7':
+        elif choice == 6:
             # Exit
-            ui.show_success("\nGoodbye!")
+            print("Goodbye!")
             db.close()
             break
+            
 
         else:
-            ui.show_error("Invalid choice. Please try again.\n")
+            print("Invalid choice. Please try again.\n")
+
+
+def display_table(books):
+    table = Texttable()
+
+    table.set_cols_align(["l", "r", "c"])
+    table.set_cols_width([50, 10, 10])
+    table.header(["Title", "Price", "Rating"])
+
+    for book in books:
+        table.add_row([book.title, f"£{float(book.price)}£", book.rating])
+
+    print(table.draw())
 
 
 if __name__ == "__main__":
