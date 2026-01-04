@@ -10,9 +10,8 @@ def show_menu():
     print("1. Scrape books from website")
     print("2. Show statistics")
     print("3. Search books by title")
-    print("4. Find cheapest books")
-    print("5. Find highest rated books")
-    print("6. Export to CSV")
+    print("4. Find cheapest books with high ratings")
+    print("5. Export to CSV")
     print("7. Exit")
 
 
@@ -32,7 +31,7 @@ def main():
             print("Scraping first 5 pages (~100 books)...")
             books = []
 
-            for page in range(1, 6):
+            for page in range(10, 16):
                 print(f"Scraping page {page}/5...")
                 page_books = scraper.scrape_page(page)
                 if not page_books:
