@@ -1,6 +1,7 @@
 class Book:
-    def __init__(self, title, price, rating, availab, url):
+    def __init__(self, title, category, price, rating, availab, url):
         self.title = title
+        self.category = category
         self.price = price
         self.rating = rating
         self.availab = availab
@@ -11,4 +12,4 @@ class Book:
         return ratings_map[self.rating]
 
     def __str__(self):
-        return f"{self.title} - £{self.price} - rating {self.rating} - {self.availab}"
+        return f"{self.title} - £{self.price} - rating {self.rating} - {self.category}"

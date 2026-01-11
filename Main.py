@@ -27,23 +27,26 @@ def main():
         choice = int(input("Enter your choice (1-7): "))
 
         if choice == 1:
+            print("Scraping first 7 categories...\n")
+            db.clear_database()
 
-            print("Scraping first 5 pages (~100 books)...")
-            books = []
+            categories = scraper.get_categories()
+            selected_categories = list(categories.items())[:7]
+            total_saved = 0
 
-            for page in range(10, 16):
-                print(f"Scraping page {page}/5...")
-                page_books = scraper.scrape_page(page)
-                if not page_books:
-                    break
-                books.extend(page_books)
-                time.sleep(0.1)
+            for category_name, category_url in selected_categories:
+                print(f"Scraping category: {category_name}...")
+                books = scraper.scrape_category(category_url, category_name)
 
-            if books:
-                num_saved = db.save_books(books)
-                print(f"\nSuccessfully scraped and saved {num_saved} books!\n")
-            else:
-                print("No books found.\n")
+                if books:
+                    saved = db.save_books(books)
+                    total_saved += saved
+                    print(f"  Saved {saved} books from {category_name}\n")
+                else:
+                    print(f"  No books found in {category_name}\n")
+                time.sleep(2)
+
+            print(f"Scraping completed. Total books saved: {total_saved}\n")
 
         elif choice == 2:
             # Statistics

@@ -64,11 +64,12 @@ class BookService:
         try:
             with open(filename, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow(['Title', 'Price', 'Rating', 'Availability', 'URL'])
+                writer.writerow(['Title', 'Category', 'Price', 'Rating', 'Availability', 'URL'])
 
                 for book in books:
                     writer.writerow([
                         book.title,
+                        book.category,
                         book.price,
                         book.rating,
                         book.availab,
