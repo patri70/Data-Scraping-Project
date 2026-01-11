@@ -14,10 +14,9 @@ class BookService:
         total_books = len(books)
 
         total_price = sum(book.price for book in books)
-        avg_price = total_price / total_books
+        avg_price = round(total_price / total_books,2)
 
-        min_price = min(book.price for book in books)
-        max_price = max(book.price for book in books)
+
 
         ratings = {}
         for book in books:
@@ -26,12 +25,20 @@ class BookService:
             else:
                 ratings[book.rating] = 1
 
+        ratings_with_percent = {}
+        for rating, count in ratings.items():
+            percent = (count / total_books) * 100
+            ratings_with_percent[rating] = {
+                'count': count,
+                'percent': round(percent, 2)
+            }
+
+        top_category = self.database.get_top_category_by_rating()
         return {
             'total_books': total_books,
             'avg_price': avg_price,
-            'min_price': min_price,
-            'max_price': max_price,
-            'ratings': ratings
+            'ratings': ratings_with_percent,
+            'top_category': top_category
         }
 
 
@@ -47,13 +54,19 @@ class BookService:
         return matching_books
 
 
-    def cheap_book_high_rating(self, nr_books=10):
-        books = self.database.get_all_books()
-
-        sorted_books = sorted(books, key=lambda book: (-book.rating_num(), book.price))
-
-        return sorted_books[:nr_books]
-
+    def get_category_analysis(self):
+        stats = self.database.get_stats_by_category()
+        analysis = []
+        for row in stats:
+            category_data = {
+                'category': row[0],
+                'book_count': row[1],
+                'avg_price': row[2],
+                'min_price': row[3],
+                'max_price': row[4]
+            }
+            analysis.append(category_data)
+        return analysis
 
     def export_to_csv(self, filename="books_export.csv"):
         books = self.database.get_all_books()

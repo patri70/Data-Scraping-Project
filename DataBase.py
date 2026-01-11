@@ -4,7 +4,7 @@ from Book import Book
 class BookDatabase:
     def __init__(self, db_name = "books.db"):
         self.db_name = db_name
-        self.connect = sqlite3.connect(db_name)
+        self.connect = sqlite3.connect(db_name, check_same_thread=False)
         self.cursor = self.connect.cursor()
         self.create_table()
 
@@ -45,6 +45,25 @@ class BookDatabase:
 
         return books
 
+    def get_stats_by_category(self):
+        self.cursor.execute('''
+            SELECT category, COUNT(*), AVG(price), MIN(price), MAX(price)
+            FROM books
+            GROUP BY category
+            ORDER BY AVG(price) DESC
+        ''')
+        return self.cursor.fetchall()
+
+    def get_top_category_by_rating(self):
+        self.cursor.execute('''
+            SELECT category, COUNT(*) as count
+             FROM books
+             WHERE rating = 'Five'
+             GROUP BY category 
+             ORDER BY count DESC
+            LIMIT 1
+        ''')
+        return self.cursor.fetchone()
     def clear_database(self):
         self.cursor.execute('DELETE FROM books')
         self.connect.commit()
