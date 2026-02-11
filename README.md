@@ -23,6 +23,7 @@ The main goal of this project was to better understand:
 
 ## 🗂️ Project Structure
 
+```
 Data-Scraping-Project/
 │
 ├── Book.py          # Defines the Book model
@@ -31,7 +32,7 @@ Data-Scraping-Project/
 ├── Scraper.py       # Contains scraping logic
 ├── Main.py          # Entry point (menu and threading)
 └── README.md
-
+```
 ---
 
 ## ⚙️ Technologies Used
