@@ -7,7 +7,7 @@ It was built as a learning project to practice web scraping, object-oriented pro
 
 ## 🚀 What This Project Does
 
-- Scrapes book information (title, price, rating, availability)
+- Scrapes book information (title, price, rating, availability, genre)
 - Uses multi-threading for faster data collection
 - Structures the data using a dedicated Book model
 - Saves the extracted data into a local SQLite database
